@@ -136,7 +136,7 @@ label .opt { font-weight: 400; color: var(--muted); }
 input, select, textarea { font: inherit; font-size: 1rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 11px 12px; width: 100%; }
 textarea { min-height: 130px; resize: vertical; }
 .form-foot { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.form-note { margin: 0; font-size: 0.9rem; color: var(--muted); }
+.form-note { grid-column: 1 / -1; margin: 0; font-size: 0.9rem; color: var(--muted); }
 #form-status { margin: 0; font-size: 0.95rem; }
 #form-status.ok { color: var(--live); }
 #form-status.err { color: #c0392b; }
@@ -379,7 +379,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
           <label for="f-msg">Message</label>
           <textarea id="f-msg" name="message" required placeholder="What's happening, and where are you based?"></textarea>
         </div>
-        <p class="field full form-note">Your details are only used to reply to your enquiry. See the <a href="privacy.html">privacy notice</a>.</p>
+        <p class="form-note">Your details are only used to reply to your enquiry. See the <a href="privacy.html">privacy notice</a>.</p>
         <div class="form-foot">
           <button class="btn primary" type="submit">Send message</button>
           <p id="form-status" role="status" aria-live="polite"></p>
