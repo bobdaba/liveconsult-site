@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Privacy notice · Live Consult</title>
 <meta name="description" content="How Live Consult uses the personal information you send through the website.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;125,800&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -42,7 +45,9 @@ header { padding-block: 22px; }
 header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink);
   font-family: var(--f-display); font-weight: 800; font-stretch: 125%; font-size: 1.35rem; letter-spacing: -0.01em; }
-.dot { width: 11px; height: 11px; border-radius: 50%; background: var(--live); flex: none; }
+.logo .mark { width: 30px; height: 30px; flex: none; }
+.mark circle { fill: var(--live); }
+.mark path { fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round; }
 .back { font-weight: 500; text-decoration: none; }
 main { padding-block: clamp(32px, 6vw, 64px) clamp(56px, 8vw, 96px); }
 article { max-width: 68ch; }
@@ -68,7 +73,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
 <header>
   <div class="wrap">
-    <a class="logo" href="index.html" aria-label="Live Consult home"><span class="dot" aria-hidden="true"></span>Live Consult</a>
+    <a class="logo" href="index.html" aria-label="Live Consult home"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="16" cy="48" r="8"/><path d="M16 28a20 20 0 0 1 20 20"/><path d="M16 10a38 38 0 0 1 38 38"/></svg>Live Consult</a>
     <a class="back" href="index.html">← Back to the website</a>
   </div>
 </header>
