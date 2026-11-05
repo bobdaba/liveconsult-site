@@ -10,160 +10,176 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,500;112,700;125,800&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;125,800&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Layout: left-aligned hero with a live "everything's working" status board, then a two-column service grid, steps, areas, contact. */
+  /* Layout: left-aligned hero with an example status board, a two-column service list, steps, areas, contact. */
   --paper: #f3f4f0;
   --surface: #ffffff;
   --ink: #16202a;
-  --muted: #5a6670;
+  --muted: #47535c;
   --line: #d9ddd6;
   --accent: #0b5f68;
   --accent-ink: #ffffff;
   --live: #2f9e5b;
+  --err: #b3261e;
   --board: #16202a;
   --board-ink: #dfe7e3;
-  --board-dim: #8a9a96;
+  --board-dim: #9aaaa6;
+  --board-rule: #2a3641;
+  --board-ok: #7fd6a0;
+  --shadow: rgb(10 20 30 / 0.55);
   --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
   --f-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --col-gap: clamp(32px, 5vw, 64px);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #11181f; --surface: #18222b; --ink: #e6ebe8; --muted: #9aa8a4;
-    --line: #2a3640; --accent: #5fc1c9; --accent-ink: #0b1a1e; --live: #4cc47c;
-    --board: #0b1117; --board-ink: #dfe7e3; --board-dim: #7f8f8b;
+    --paper: #11181f; --surface: #18222b; --ink: #e6ebe8; --muted: #b3c0bc;
+    --line: #2a3640; --accent: #5fc1c9; --accent-ink: #0b1a1e; --live: #4cc47c; --err: #ff8a80;
+    --board: #0b1117; --board-ink: #dfe7e3; --board-dim: #8d9d99; --board-rule: #1f2a33; --shadow: rgb(0 0 0 / 0.6);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #11181f; --surface: #18222b; --ink: #e6ebe8; --muted: #9aa8a4;
-  --line: #2a3640; --accent: #5fc1c9; --accent-ink: #0b1a1e; --live: #4cc47c;
-  --board: #0b1117; --board-ink: #dfe7e3; --board-dim: #7f8f8b;
+  --paper: #11181f; --surface: #18222b; --ink: #e6ebe8; --muted: #b3c0bc;
+  --line: #2a3640; --accent: #5fc1c9; --accent-ink: #0b1a1e; --live: #4cc47c; --err: #ff8a80;
+  --board: #0b1117; --board-ink: #dfe7e3; --board-dim: #8d9d99; --board-rule: #1f2a33; --shadow: rgb(0 0 0 / 0.6);
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: clip; }
 body {
-  margin: 0; background: var(--paper); color: var(--ink);
+  margin: 0; background: var(--paper); color: var(--ink); overflow-x: clip;
   font-family: var(--f-body); font-size: 1.0625rem; line-height: 1.6;
+  caret-color: var(--accent); accent-color: var(--accent);
 }
-a { color: var(--accent); }
+::selection { background: color-mix(in srgb, var(--accent) 28%, transparent); color: var(--ink); }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 0.2em; transition: text-decoration-thickness 150ms ease-out, color 150ms ease-out; }
+a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 .wrap { width: min(1120px, 100% - 40px); margin-inline: auto; }
-h1, h2, h3 { font-family: var(--f-display); line-height: 1.08; text-wrap: balance; margin: 0; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.08; text-wrap: balance; margin: 0; overflow-wrap: break-word; min-width: 0; }
+p, li, small { text-wrap: pretty; }
 h2 { font-size: clamp(1.9rem, 4vw, 2.6rem); font-weight: 800; font-stretch: 125%; letter-spacing: -0.01em; }
-.kicker { font-family: var(--f-mono); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
 section { padding-block: clamp(56px, 8vw, 96px); border-top: 1px solid var(--line); }
 
 /* Header */
-header { padding-block: 22px; }
+header { padding-block: 24px; }
 header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink);
+.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink);
   font-family: var(--f-display); font-weight: 800; font-stretch: 125%; font-size: 1.35rem; letter-spacing: -0.01em; }
-.dot { width: 11px; height: 11px; border-radius: 50%; background: var(--live); box-shadow: 0 0 0 0 var(--live); animation: pulse 2.4s infinite; flex: none; }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--live) 55%, transparent); } 70% { box-shadow: 0 0 0 9px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 .logo .mark { width: 30px; height: 30px; flex: none; }
 .mark circle { fill: var(--live); }
 .mark path { fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round; }
-nav ul { display: flex; gap: 22px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+nav ul { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
 nav a { color: var(--ink); text-decoration: none; font-weight: 500; font-size: 0.97rem; }
 nav a:hover { color: var(--accent); }
 
 /* Hero */
-.hero { padding-block: clamp(36px, 6vw, 72px) clamp(56px, 8vw, 96px); border-top: 0; }
-.hero .wrap { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
+.hero { padding-block: clamp(40px, 6vw, 72px) clamp(56px, 8vw, 96px); border-top: 0; min-height: calc(100svh - 80px); display: grid; align-content: center; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--col-gap); align-items: center; }
 .hero h1 { font-size: clamp(2.6rem, 6.4vw, 4.6rem); font-weight: 800; font-stretch: 125%; letter-spacing: -0.02em; }
-.hero h1 em { font-style: normal; color: var(--accent); }
-.lede { font-size: 1.2rem; color: var(--muted); max-width: 34em; margin: 22px 0 30px; }
+.lede { font-size: 1.2rem; color: var(--muted); max-width: 34em; margin: 24px 0 32px; }
 .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
-.btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 8px; font-weight: 600;
-  text-decoration: none; border: 2px solid var(--accent); font-family: var(--f-body); font-size: 1rem; cursor: pointer; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 8px; font-weight: 600;
+  text-decoration: none; border: 2px solid var(--accent); font-family: var(--f-body); font-size: 1rem; cursor: pointer;
+  transition: background-color 150ms ease-out, color 150ms ease-out, transform 100ms ease-out; }
 .btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { background: color-mix(in srgb, var(--accent) 86%, var(--ink)); }
 .btn.ghost { color: var(--accent); background: transparent; }
-.btn:hover { filter: brightness(1.08); }
+.btn.ghost:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-.board { background: var(--board); color: var(--board-ink); border-radius: 14px; padding: 22px 24px 18px;
-  font-family: var(--f-mono); font-size: 0.92rem; box-shadow: 0 24px 50px -28px rgba(10, 20, 30, .55); }
-.board-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 14px;
-  border-bottom: 1px dashed #34424c; margin-bottom: 8px; color: var(--board-dim); font-size: 0.78rem; letter-spacing: .08em; text-transform: uppercase; }
-.board-head span:first-child { display: flex; align-items: center; gap: 9px; color: var(--board-ink); }
+.board { background: var(--board); color: var(--board-ink); border-radius: 16px; padding: 24px 24px 20px;
+  font-family: var(--f-mono); font-size: 0.92rem; box-shadow: 0 24px 48px -28px var(--shadow); }
+.board-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 12px;
+  border-bottom: 1px dashed var(--board-rule); margin-bottom: 8px; font-family: var(--f-body); font-size: 0.9rem; }
+.board-head strong { color: var(--board-ink); font-weight: 600; }
+.board-head span { color: var(--board-dim); }
 .board ul { list-style: none; margin: 0; padding: 0; }
-.board li { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 9px 0; border-bottom: 1px solid #222e38; }
+.board li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--board-rule); }
 .board li:last-child { border-bottom: 0; }
 .board .what { color: var(--board-ink); }
-.board .state { color: #7fd6a0; text-align: right; }
-.board small { display: block; color: var(--board-dim); font-size: 0.78rem; margin-top: 12px; font-family: var(--f-body); }
+.board .state { color: var(--board-ok); text-align: right; }
+.board small { display: block; color: var(--board-dim); font-size: 0.85rem; margin-top: 12px; font-family: var(--f-body); }
 
 /* Services */
-.section-head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 48px; align-items: end; margin-bottom: 40px; }
+.section-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px var(--col-gap); align-items: end; margin-bottom: 40px; }
 .section-head p { color: var(--muted); margin: 0; max-width: 34em; }
-.services { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 2px solid var(--ink); }
-.svc { padding: 28px 28px 30px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 52px 1fr; gap: 18px; }
+.services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--ink); }
+.svc { padding: 28px 28px 32px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 20px; }
 .svc:nth-child(odd) { border-right: 1px solid var(--line); }
 .svc:nth-child(even) { padding-left: 28px; }
 .svc svg { width: 40px; height: 40px; stroke: var(--accent); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .svc h3 { font-size: 1.32rem; font-weight: 700; font-stretch: 112%; margin-bottom: 8px; }
 .svc p { margin: 0 0 12px; color: var(--muted); }
-.tags { display: flex; gap: 8px; flex-wrap: wrap; }
-.tag { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: .06em; text-transform: uppercase;
-  border: 1px solid var(--line); color: var(--ink); padding: 3px 8px; border-radius: 4px; background: var(--surface); }
+.tags { display: flex; gap: 8px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
+.tags li { font-size: 0.85rem; font-weight: 500; border: 1px solid var(--line); color: var(--ink); padding: 4px 12px; border-radius: 999px; background: var(--surface); }
 
 /* Steps */
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; list-style: none; margin: 0; padding: 0; counter-reset: s; }
-.steps li { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 26px; counter-increment: s; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; list-style: none; margin: 0; padding: 0; counter-reset: s; }
+.steps li { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 28px; counter-increment: s; }
 .steps li::before { content: "0" counter(s); display: block; font-family: var(--f-display); font-weight: 800; font-stretch: 125%;
-  font-size: 2.4rem; color: var(--accent); line-height: 1; margin-bottom: 14px; }
-.steps h3 { font-size: 1.2rem; font-weight: 700; font-stretch: 112%; margin-bottom: 6px; }
+  font-size: 2.4rem; color: var(--accent); line-height: 1; margin-bottom: 16px; }
+.steps h3 { font-size: 1.2rem; font-weight: 700; font-stretch: 112%; margin-bottom: 8px; }
 .steps p { margin: 0; color: var(--muted); }
 
 /* Areas + about */
-.split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 64px); }
-.towns { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 20px 0 18px; }
-.towns li { font-family: var(--f-mono); font-size: 0.85rem; border: 1px solid var(--line); background: var(--surface); padding: 6px 12px; border-radius: 999px; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--col-gap); }
+.towns { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 20px 0; }
+.towns li { font-size: 0.95rem; font-weight: 500; border: 1px solid var(--line); background: var(--surface); padding: 4px 12px; border-radius: 999px; }
 .split p { color: var(--muted); max-width: 34em; }
-.about { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: clamp(24px, 4vw, 36px); }
+.about { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: clamp(24px, 4vw, 36px); }
 .about h3 { font-size: 1.5rem; font-weight: 800; font-stretch: 125%; margin-bottom: 12px; }
-.about ul { margin: 14px 0 0; padding-left: 1.1em; color: var(--muted); }
-.about li { margin-bottom: 6px; }
+.about ul { margin: 16px 0 0; padding-left: 1.1em; color: var(--muted); }
+.about li { margin-bottom: 8px; }
 
 /* Contact */
-.contact .wrap { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(32px, 5vw, 64px); align-items: start; }
+.contact .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: var(--col-gap); align-items: start; }
 .contact p { color: var(--muted); max-width: 30em; }
-.email-line { font-family: var(--f-mono); font-size: 1.05rem; margin-top: 22px; }
-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: clamp(20px, 3vw, 30px); }
-.field { display: grid; gap: 6px; }
+.email-line { font-size: 1.05rem; margin-top: 24px; }
+.email-line a { font-weight: 600; }
+form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: clamp(20px, 3vw, 32px); }
+.field { display: grid; gap: 8px; }
 .field.full { grid-column: 1 / -1; }
 label { font-weight: 600; font-size: 0.93rem; }
 label .opt { font-weight: 400; color: var(--muted); }
-input, select, textarea { font: inherit; font-size: 1rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 11px 12px; width: 100%; }
-textarea { min-height: 130px; resize: vertical; }
+input, select, textarea { font: inherit; font-size: 1rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 12px; width: 100%;
+  transition: border-color 150ms ease-out; }
+input:hover, select:hover, textarea:hover { border-color: var(--muted); }
+input:focus-visible, select:focus-visible, textarea:focus-visible { border-color: var(--accent); outline-offset: 1px; }
+input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--err); }
+::placeholder { color: var(--muted); opacity: 1; }
+textarea { min-height: 128px; resize: vertical; }
 .form-foot { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .contact .form-note { grid-column: 1 / -1; max-width: none; margin: 0; font-size: 0.9rem; color: var(--muted); }
 #form-status { margin: 0; font-size: 0.95rem; }
 #form-status.ok { color: var(--live); }
-#form-status.err { color: #c0392b; }
+#form-status.err { color: var(--err); }
 
 footer { border-top: 1px solid var(--line); padding-block: 28px; color: var(--muted); font-size: 0.9rem; }
-footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer .wrap { display: flex; justify-content: space-between; gap: 8px 24px; flex-wrap: wrap; }
 
 @media (max-width: 860px) {
-  .hero .wrap, .section-head, .split, .contact .wrap { grid-template-columns: 1fr; }
-  .steps { grid-template-columns: 1fr; }
-  .services { grid-template-columns: 1fr; }
+  .hero .wrap, .section-head, .split, .contact .wrap { grid-template-columns: minmax(0, 1fr); }
+  .steps { grid-template-columns: minmax(0, 1fr); }
+  .services { grid-template-columns: minmax(0, 1fr); }
   .svc, .svc:nth-child(even) { padding: 24px 0; border-right: 0; }
 }
 @media (max-width: 480px) {
-  form { grid-template-columns: 1fr; }
-  nav ul { gap: 14px; }
-  .svc { grid-template-columns: 1fr; gap: 10px; }
+  form { grid-template-columns: minmax(0, 1fr); }
+  nav ul { gap: 16px; }
+  .svc { grid-template-columns: minmax(0, 1fr); gap: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .dot { animation: none; }
+  a, .btn, input, select, textarea { transition: none; }
+  .btn:active { transform: none; }
 }
 </style>
 </head>
@@ -187,24 +203,23 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   <section class="hero">
     <div class="wrap">
       <div>
-        <p class="kicker">IT help for Cheshire homes &amp; small businesses</p>
-        <h1>Tech that just <em>works</em>, at home and at work.</h1>
-        <p class="lede">Wi-Fi that reaches every room, backups that actually run, cameras you can trust and spreadsheets that do the work for you. On site across Cheshire, or remotely anywhere in the UK.</p>
+        <h1>Cheshire tech support that just works.</h1>
+        <p class="lede">For homes and small businesses, on site locally or remotely UK‑wide.</p>
         <div class="ctas">
           <a class="btn primary" href="#contact">Get in touch</a>
-          <a class="btn ghost" href="#services">See what I can help with</a>
+          <a class="btn ghost" href="#services">See services</a>
         </div>
       </div>
 
-      <div class="board" role="img" aria-label="Example status board showing Wi-Fi, backups, cameras, website and automations all working">
-        <div class="board-head"><span><span class="dot" aria-hidden="true"></span>Live status</span><span>Example</span></div>
+      <div class="board" role="img" aria-label="Example status board showing Wi-Fi, backups, cameras, website, heating and invoices all working">
+        <div class="board-head"><strong>Live status</strong><span>Example</span></div>
         <ul>
-          <li><span class="what">Wi-Fi · every room</span><span class="state">strong ✓</span></li>
-          <li><span class="what">Backups · last run 02:00</span><span class="state">complete ✓</span></li>
-          <li><span class="what">Cameras · 4 of 4</span><span class="state">online ✓</span></li>
-          <li><span class="what">Website · updates &amp; SSL</span><span class="state">current ✓</span></li>
-          <li><span class="what">Heating schedule</span><span class="state">running ✓</span></li>
-          <li><span class="what">Monthly invoices (Excel)</span><span class="state">automated ✓</span></li>
+          <li><span class="what">Wi-Fi in every room</span><span class="state">strong</span></li>
+          <li><span class="what">Backups, last run 02:00</span><span class="state">complete</span></li>
+          <li><span class="what">Cameras, 4 of 4</span><span class="state">online</span></li>
+          <li><span class="what">Website updates &amp; SSL</span><span class="state">current</span></li>
+          <li><span class="what">Heating schedule</span><span class="state">running</span></li>
+          <li><span class="what">Monthly invoices (Excel)</span><span class="state">automated</span></li>
         </ul>
         <small>This is what “sorted” looks like. I set it up, explain it, and keep it that way.</small>
       </div>
@@ -214,11 +229,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   <section id="services">
     <div class="wrap">
       <div class="section-head">
-        <div>
-          <p class="kicker">Services</p>
-          <h2>One person to call for all of it.</h2>
-        </div>
-        <p>Most problems cross more than one box: slow Wi-Fi is why the cameras drop out, and a missing backup is why the laptop failure hurts. I look at the whole picture.</p>
+        <h2>Eight services, one person to call.</h2>
+        <p>Problems rarely stay in one box: slow Wi-Fi is why the cameras drop out, and a missing backup is why a laptop failure hurts. I look at the whole picture.</p>
       </div>
 
       <div class="services">
@@ -226,8 +238,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
           <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="8" width="30" height="19" rx="2"/><path d="M14 33h12M20 27v6"/></svg>
           <div>
             <h3>IT support</h3>
-            <p>Slow or broken computers, email problems, printers, new device setup, viruses and virus checks. Fixed remotely where possible, in person where not.</p>
-            <div class="tags"><span class="tag">Home</span><span class="tag">Business</span><span class="tag">Remote</span></div>
+            <p>Slow or broken computers, email problems, printers, new devices and virus checks. Fixed remotely where possible, in person where not.</p>
+            <ul class="tags" aria-label="Available for"><li>Home</li><li>Business</li><li>Remote</li></ul>
           </div>
         </article>
 
@@ -235,8 +247,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
           <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 16a20 20 0 0 1 28 0M11 21a13 13 0 0 1 18 0M16 26a6 6 0 0 1 8 0"/><circle cx="20" cy="31" r="1.6"/></svg>
           <div>
             <h3>Wi-Fi &amp; networking</h3>
-            <p>Dead spots fixed with properly placed mesh or wired access points, guest networks, outbuildings and garden offices connected, and broadband that delivers what you pay for.</p>
-            <div class="tags"><span class="tag">Home</span><span class="tag">Business</span></div>
+            <p>Dead spots fixed with properly placed mesh or wired access points, guest networks, outbuildings and garden offices connected.</p>
+            <ul class="tags" aria-label="Available for"><li>Home</li><li>Business</li></ul>
           </div>
         </article>
 
@@ -244,8 +256,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
           <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="7" width="30" height="26" rx="2"/><path d="M5 14h30M10 10.5h.01M14 10.5h.01M11 20h12M11 25h18"/></svg>
           <div>
             <h3>Website set-up &amp; maintenance</h3>
-            <p>A clear, fast website for your business, then ongoing care: hosting, security updates, backups, domain and email, and small content changes when you need them.</p>
-            <div class="tags"><span class="tag">Business</span><span class="tag">Monthly plans</span></div>
+            <p>A clear, fast website for your business, then ongoing care: hosting, security updates, domain, email and small changes when you need them.</p>
+            <ul class="tags" aria-label="Available for"><li>Business</li><li>Monthly plans</li></ul>
           </div>
         </article>
 
@@ -253,8 +265,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
           <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 19 20 7l14 12M10 16v17h20V16"/><circle cx="20" cy="24" r="3.5"/><path d="M20 20.5V18"/></svg>
           <div>
             <h3>Home automation</h3>
-            <p>Lighting, heating, blinds and sensors that work together and follow your routines, set up on platforms such as Home Assistant so you aren't locked to one brand.</p>
-            <div class="tags"><span class="tag">Home</span></div>
+            <p>Lighting, heating, blinds and sensors that follow your routines, on platforms such as Home Assistant so you aren’t locked to one brand.</p>
+            <ul class="tags" aria-label="Available for"><li>Home</li></ul>
           </div>
         </article>
 
@@ -262,8 +274,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
           <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="11" cy="11" r="4"/><circle cx="29" cy="29" r="4"/><path d="M15 11h8a6 6 0 0 1 6 6v8M25 29h-8a6 6 0 0 1-6-6v-8"/></svg>
           <div>
             <h3>Business automation</h3>
-            <p>Stop copying and pasting. Forms, emails, approvals, invoices and reports that run on their own using Microsoft 365, Power Automate and the tools you already pay for.</p>
-            <div class="tags"><span class="tag">Business</span></div>
+            <p>Forms, emails, approvals, invoices and reports that run on their own, using Microsoft 365, Power Automate and the tools you already pay for.</p>
+            <ul class="tags" aria-label="Available for"><li>Business</li></ul>
           </div>
         </article>
 
@@ -271,8 +283,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
           <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="6" width="28" height="28" rx="2"/><path d="M6 14h28M6 22h28M15 6v28M24 6v28"/></svg>
           <div>
             <h3>Excel support</h3>
-            <p>Formulas that are giving the wrong answer, Power Query to tidy messy data, dashboards, and templates for quoting, job costing, stock and cash flow, built to your needs.</p>
-            <div class="tags"><span class="tag">Business</span><span class="tag">Home</span><span class="tag">Remote</span></div>
+            <p>Formulas giving the wrong answer, Power Query to tidy messy data, dashboards, and templates for quotes, job costing, stock and cash flow.</p>
+            <ul class="tags" aria-label="Available for"><li>Business</li><li>Home</li><li>Remote</li></ul>
           </div>
         </article>
 
@@ -280,8 +292,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
           <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 13l20-5 3 10-20 5zM9 23l2 7h8M29 13l5-1"/><circle cx="16" cy="15.5" r="2"/></svg>
           <div>
             <h3>Camera surveillance (CCTV)</h3>
-            <p>Cameras for the home, yard, farm or premises, recording locally so your footage stays yours, with alerts and secure viewing on your phone. Positioned with privacy rules in mind.</p>
-            <div class="tags"><span class="tag">Home</span><span class="tag">Business</span><span class="tag">Rural</span></div>
+            <p>Cameras for the home, yard, farm or premises, recording locally so your footage stays yours, with alerts and secure viewing on your phone.</p>
+            <ul class="tags" aria-label="Available for"><li>Home</li><li>Business</li><li>Rural</li></ul>
           </div>
         </article>
 
@@ -289,8 +301,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
           <svg viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="10" rx="13" ry="4"/><path d="M7 10v20c0 2.2 5.8 4 13 4s13-1.8 13-4V10M7 20c0 2.2 5.8 4 13 4s13-1.8 13-4"/></svg>
           <div>
             <h3>Backup, NAS &amp; data recovery</h3>
-            <p>Automatic backups for photos and business files, home and office NAS setup, moving everything to a new computer, and help getting data back when a drive fails.</p>
-            <div class="tags"><span class="tag">Home</span><span class="tag">Business</span></div>
+            <p>Automatic backups for photos and business files, home and office NAS setup, moving to a new computer, and getting data back when a drive fails.</p>
+            <ul class="tags" aria-label="Available for"><li>Home</li><li>Business</li></ul>
           </div>
         </article>
       </div>
@@ -300,15 +312,12 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   <section id="how">
     <div class="wrap">
       <div class="section-head">
-        <div>
-          <p class="kicker">How it works</p>
-          <h2>Plain English, from first call to finished.</h2>
-        </div>
-        <p>No jargon and no surprises. You'll always know what's being done and why.</p>
+        <h2>How a job works, start to finish.</h2>
+        <p>No jargon and no surprises. You’ll always know what’s being done and why.</p>
       </div>
       <ol class="steps">
-        <li><h3>Tell me what's going on</h3><p>Use the form or email. A rough description is fine, and a photo of an error message helps.</p></li>
-        <li><h3>Get a clear quote</h3><p>I'll suggest the simplest fix, tell you what it costs before any work starts, and whether it can be done remotely.</p></li>
+        <li><h3>Tell me what’s going on</h3><p>Use the form or email. A rough description is fine, and a photo of an error message helps.</p></li>
+        <li><h3>Get a clear quote</h3><p>I’ll suggest the simplest fix, tell you what it costs before any work starts, and whether it can be done remotely.</p></li>
         <li><h3>Sorted and explained</h3><p>The work gets done, you get a short note of what was changed, and help is there if anything comes up later.</p></li>
       </ol>
     </div>
@@ -317,22 +326,20 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   <section id="areas">
     <div class="wrap split">
       <div>
-        <p class="kicker">Areas covered</p>
         <h2>On site in Cheshire. Remote across the UK.</h2>
-        <ul class="towns">
+        <ul class="towns" aria-label="Towns covered on site">
           <li>Knutsford</li><li>Holmes Chapel</li><li>Goostrey</li><li>Northwich</li>
           <li>Middlewich</li><li>Sandbach</li><li>Congleton</li><li>Wilmslow</li>
         </ul>
         <p>Not on the list? Most IT, Excel, automation and website work can be done remotely and securely wherever you are in the UK.</p>
       </div>
       <div class="about">
-        <p class="kicker">About</p>
         <h3>Enterprise know-how, local service.</h3>
         <p>Live Consult is run by a Cheshire-based IT and cyber security professional who has spent years looking after systems for large organisations, and now brings the same standards to homes and small businesses.</p>
         <ul>
           <li>Security built in, not bolted on</li>
           <li>Rural properties and outbuildings understood</li>
-          <li>Honest advice, including when you don't need to spend anything</li>
+          <li>Honest advice, including when you don’t need to spend anything</li>
         </ul>
       </div>
     </div>
@@ -341,10 +348,9 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   <section id="contact" class="contact">
     <div class="wrap">
       <div>
-        <p class="kicker">Contact</p>
-        <h2>Tell me what needs sorting.</h2>
-        <p>Send a message and I'll reply within one working day. Evenings and weekends are often the easiest time for home visits.</p>
-        <p class="email-line">Email: <a href="mailto:hello@liveconsult.co.uk">hello@liveconsult.co.uk</a></p>
+        <h2>Get in touch</h2>
+        <p>Tell me what needs sorting and I’ll reply within one working day. Evenings and weekends are often the easiest time for home visits.</p>
+        <p class="email-line">Or email <a href="mailto:hello@liveconsult.co.uk">hello@liveconsult.co.uk</a></p>
       </div>
 
       <form id="contact-form" action="https://formspree.io/f/moeeyvnr" method="POST" novalidate>
@@ -383,7 +389,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
         </div>
         <div class="field full">
           <label for="f-msg">Message</label>
-          <textarea id="f-msg" name="message" required placeholder="What's happening, and where are you based?"></textarea>
+          <textarea id="f-msg" name="message" required placeholder="What’s happening, and where are you based?"></textarea>
         </div>
         <p class="form-note">Your details are only used to reply to your enquiry. See the <a href="privacy.html">privacy notice</a></p>
         <div class="form-foot">
@@ -397,8 +403,9 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
 <footer>
   <div class="wrap">
-    <span>© <span id="yr">2026</span> Live Consult · liveconsult.co.uk</span>
-    <span>IT support for homes &amp; small businesses in Cheshire · <a href="privacy.html">Privacy notice</a></span>
+    <span>© <span id="yr">2026</span> Live Consult</span>
+    <span>IT support for homes and small businesses in Cheshire</span>
+    <a href="privacy.html">Privacy notice</a>
   </div>
 </footer>
 
@@ -407,26 +414,37 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 
 const form = document.getElementById('contact-form');
 const statusEl = document.getElementById('form-status');
+const submitBtn = form.querySelector('button[type="submit"]');
 const fallback = 'Sorry, the message could not be sent. Please email hello@liveconsult.co.uk instead.';
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   statusEl.className = '';
+  const fields = form.querySelectorAll('input, textarea');
+  fields.forEach((f) => f.removeAttribute('aria-invalid'));
   if (!form.checkValidity()) {
+    const invalid = form.querySelectorAll(':invalid');
+    invalid.forEach((f) => f.setAttribute('aria-invalid', 'true'));
+    invalid[0].focus();
     statusEl.className = 'err';
     statusEl.textContent = 'Please add your name, a valid email address and a message.';
     return;
   }
-  statusEl.textContent = 'Sending…';
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Sending…';
+  statusEl.textContent = '';
   try {
     const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
     if (!res.ok) throw new Error(res.status);
     form.reset();
     statusEl.className = 'ok';
-    statusEl.textContent = 'Thanks, your message has been sent. I\'ll be in touch within one working day.';
+    statusEl.textContent = 'Thanks, your message has been sent. I’ll be in touch within one working day.';
   } catch (err) {
     statusEl.className = 'err';
     statusEl.textContent = fallback;
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send message';
   }
 });
 </script>
